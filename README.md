@@ -11,6 +11,7 @@ An advanced and modern e-commerce web application built using Django. This proje
   - Shopping cart functionality.
   - Search and filter products.
   - Responsive design for mobile, tablet, and desktop.
+  - Webscraping implementation.
 
 - **Admin Features:**
   - Add, edit, or delete products.
