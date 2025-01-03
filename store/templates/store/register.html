@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<style>
+    /* Gradient Background */
+    .gradient-custom {
+        background: linear-gradient(to right, #1a1a1a, #333333);
+        min-height: 100vh;
+    }
+
+    /* Card Styling */
+    .card {
+        background: #1e1e1e;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        transition: transform 0.3s ease-in-out;
+        border-radius: 20px;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Input Field Styling */
+    .form-control {
+        background-color: #2b2b2b;
+        color: white;
+        border: 1px solid #444;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control::placeholder {
+        color: #999;
+    }
+
+    .form-control:focus {
+        background-color: #333;
+        color: white;
+        border-color: #fff;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Button Styling */
+    .btn-custom {
+        background: #444;
+        border: 2px solid white;
+        color: white;
+        padding: 10px 50px;
+        border-radius: 25px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .btn-custom:hover {
+        background: white;
+        color: black;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Social Icons */
+    .social-icons a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        margin: 0 10px;
+        background: #2b2b2b;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    .social-icons a:hover {
+        background: white;
+        color: black;
+    }
+
+    /* Text Styling */
+    .text-white-50:hover {
+        color: white !important;
+    }
+
+    .form-label {
+        color: #aaa;
+        font-weight: 500;
+    }
+
+</style>
+
+<section class="gradient-custom mb-5">
+  <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+              <div class="card">
+                  <div class="card-body p-5 text-center">
+                      <div class="mb-md-5 mt-md-4 pb-5">
+                          <h2 class="fw-bold mb-3 text-uppercase" style="color: white;">Register</h2>
+                          <p class="text-white-50 mb-5">Please fill in the details to create an account</p>
+
+                          {% if messages %}
+                              <div class="alert alert-light mt-3" role="alert">
+                                  {% for message in messages %}
+                                      <p class="mb-0">{{ message }}</p>
+                                  {% endfor %}
+                              </div>
+                          {% endif %}
+
+                          <form method="post">
+                              {% csrf_token %}
+                              <div class="form-group mb-4">
+                                  <label for="username" class="form-label">Username</label>
+                                  <input type="text" name="username" id="username" class="form-control"
+                                         placeholder="Enter your username">
+                                  {% if form.username.errors %}
+                                      <small class="text-danger">{{ form.username.errors.0 }}</small>
+                                  {% endif %}
+                              </div>
+
+                              <div class="form-group mb-4">
+                                  <label for="email" class="form-label">Email</label>
+                                  <input type="email" name="email" id="email" class="form-control"
+                                         placeholder="Enter your email">
+                                  {% if form.email.errors %}
+                                      <small class="text-white mt-1">{{ form.email.errors.0 }}</small>
+                                  {% endif %}
+                              </div>
+
+                              <div class="form-group mb-4">
+                                  <label for="password1" class="form-label">Password</label>
+                                  <input type="password" name="password1" id="password1" class="form-control"
+                                         placeholder="Enter your password">
+                                  {% if form.password1.errors %}
+                                      <small class="text-white">{{ form.password1.errors.0 }}</small>
+                                  {% endif %}
+                              </div>
+
+                              <div class="form-group mb-4">
+                                  <label for="password2" class="form-label">Confirm Password</label>
+                                  <input type="password" name="password2" id="password2" class="form-control"
+                                         placeholder="Confirm your password">
+                                  {% if form.password2.errors %}
+                                      <small class="text-white">{{ form.password2.errors.0 }}</small>
+                                  {% endif %}
+                              </div>
+
+                              <button type="submit" class="btn btn-custom w-100 mb-4">Sign Up</button>
+                          </form>
+
+                          <p class="mt-3 text-secondary">Already have an account?<br>
+                              <a href="{% url 'login' %}" class="text-white-50 fw-bold text-decoration-none">Log In</a>
+                          </p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+
+
+{% endblock %}

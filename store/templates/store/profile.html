@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Profile{% endblock title %}
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-lg border-0 mx-auto" style="max-width: 600px; background-color: #000; color: #fff; border-radius: 15px;">
+        <div class="card-body text-center">
+            <!-- Welcome Message -->
+            <h2 class="fw-bold">Welcome, {{ user.username }}</h2>
+            <p class="text-secondary">Email: {{ user.email }}</p>
+
+            <!-- Actions -->
+            <div class="mt-4">
+                <a href="{% url 'logout' %}" class="btn btn-outline-light btn-lg rounded-pill px-5">
+                    <i class="bi bi-box-arrow-right me-2"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #121212;
+        color: #ffffff;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .card {
+        background: linear-gradient(135deg, #000000 0%, #333333 100%);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .btn-outline-light {
+        border: 2px solid #fff;
+        color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-light:hover {
+        background-color: #fff;
+        color: #000;
+    }
+</style>
+{% endblock %}

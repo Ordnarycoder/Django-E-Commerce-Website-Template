@@ -1,0 +1,381 @@
+{% extends 'base.html' %}
+
+{% block title %}Zeref Shop - Premium Fashion{% endblock %}
+
+{% block content %}
+<style>
+    .product-page {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 40px;
+        padding: 40px;
+        max-width: 1400px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        min-height: 90vh;
+    }
+
+    .product-image-section {
+        flex: 1.5;
+        max-width: 55%;
+        position: sticky;
+        top: 20px;
+        height: fit-content;
+    }
+
+    .product-image {
+        width: 100%;
+        border-radius: 12px;
+        object-fit: cover;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+
+    .thumbnail-gallery {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+
+    .thumbnail-gallery img {
+        width: 100px;
+        height: 100px;
+        border-radius: 8px;
+        object-fit: cover;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 2px solid transparent;
+    }
+
+    .thumbnail-gallery img:hover {
+        transform: scale(1.05);
+        border-color: orange;
+        box-shadow: 0 4px 12px rgba(255, 51, 102, 0.2);
+    }
+
+    .product-details-section {
+        flex: 1;
+        max-width: 40%;
+        padding: 30px;
+        background: #fafafa;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+
+    .product-title {
+        font-size: 2.5rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 20px;
+        line-height: 1.2;
+    }
+
+    .product-meta {
+        display: grid;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.1rem;
+    }
+
+    .meta-label {
+        color: #666;
+        min-width: 80px;
+    }
+
+    .product-price {
+        font-size: 2rem;
+        color: orange;
+        font-weight: 600;
+        margin: 25px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .price-currency {
+        font-size: 1rem;
+        color: #666;
+    }
+
+    .options-container {
+        margin: 25px 0;
+    }
+
+    .options-title {
+        font-size: 1.1rem;
+        color: #333;
+        margin-bottom: 12px;
+        font-weight: 500;
+    }
+
+    .size-options, .color-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+
+    .size-btn, .color-btn {
+        padding: 10px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        cursor: pointer;
+        background: #fff;
+        transition: all 0.2s ease;
+        font-weight: 500;
+    }
+
+    .size-btn:hover, .color-btn:hover {
+        border-color: orange;
+        transform: translateY(-2px);
+    }
+
+    .size-btn.active, .color-btn.active {
+        border-color: orange;
+        background: #fff0f3;
+        color: orange;
+    }
+
+    .add-cart-btn {
+        width: 100%;
+        padding: 16px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(45deg,rgb(255, 119, 0),rgb(255, 218, 33));
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .add-cart-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 51, 102, 0.3);
+    }
+
+    .product-description {
+        margin-top: 30px;
+        padding-top: 30px;
+        border-top: 1px solid #eee;
+    }
+
+    .description-title {
+        font-size: 1.2rem;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .description-text {
+        color: #666;
+        line-height: 1.6;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .product-page {
+            padding: 20px;
+        }
+
+        .product-image-section {
+            max-width: 100%;
+            position: relative;
+            top: 0;
+            margin-bottom: 30px;
+        }
+
+        .product-details-section {
+            max-width: 100%;
+        }
+
+        .product-title {
+            font-size: 2rem;
+        }
+
+        .product-price {
+            font-size: 1.8rem;
+        }
+
+        .meta-item {
+            font-size: 1rem;
+        }
+
+        .product-description {
+            margin-top: 20px;
+            padding-top: 20px;
+        }
+    }
+
+    /* Animation Classes */
+    .fade-in {
+        animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<div class="product-page">
+    <div class="product-image-section fade-in">
+        <img src="{{ product.images.first.image_url }}" alt="{{ product.name }}" class="product-image" id="mainImage">
+        
+        <div class="thumbnail-gallery">
+            {% for image in product.images.all %}
+            <img src="{{ image.image_url }}" 
+                 alt="Product view {{ forloop.counter }}" 
+                 onclick="updateMainImage('{{ image.image_url }}')"
+                 class="thumbnail">
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="product-details-section fade-in">
+        <h1 class="product-title">{{ product.name }}</h1>
+        
+        <div class="product-meta">
+            <div class="meta-item">
+                <span class="meta-label">Brand</span>
+                <span class="meta-value">{{ product.brand }}</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Gender</span>
+                <span class="meta-value">{{ product.gender }}</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Color</span>
+                <span class="meta-value">{{ product.color }}</span>
+            </div>
+        </div>
+
+        <div class="product-price">
+            <span>{{ product.price }}</span>
+            <span class="price-currency">TL</span>
+        </div>
+
+        {% if product.sizes %}
+        <div class="options-container">
+            <h3 class="options-title">Select Size</h3>
+            <div class="size-options">
+                {% for size in product.sizes %}
+                <button class="size-btn" data-size="{{ size }}" onclick="selectOption(this, 'size')">
+                    {{ size }}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="options-container">
+            <h3 class="options-title">Available Color</h3>
+            <div class="color-options">
+                <button class="color-btn active" data-color="{{ product.color }}" onclick="selectOption(this, 'color')">
+                    {{ product.color }}
+                </button>
+            </div>
+        </div>
+
+        <button class="add-cart-btn" data-product-id="{{ product.id }}" onclick="addToCart({{ product.id }})">
+            Add to Cart
+        </button>
+
+        {% if product.description %}
+        <div class="product-description">
+            <h3 class="description-title">Product Description</h3>
+            <p class="description-text">{{ product.description }}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function updateMainImage(url) {
+        const mainImage = document.getElementById('mainImage');
+        mainImage.style.opacity = '0';
+        setTimeout(() => {
+            mainImage.src = url;
+            mainImage.style.opacity = '1';
+        }, 200);
+    }
+
+    function selectOption(element, optionType) {
+        const buttons = document.querySelectorAll(`.${optionType}-btn`);
+        buttons.forEach(button => button.classList.remove('active'));
+        element.classList.add('active');
+    }
+
+    function addToCart(productId) {
+        const selectedSize = document.querySelector('.size-btn.active')?.dataset.size;
+        const selectedColor = document.querySelector('.color-btn.active')?.dataset.color;
+    
+        if (!selectedSize && document.querySelector('.size-options')) {
+            alert('Please select a size');
+            return;
+        }
+    
+        fetch(`/add-to-cart/${productId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                size: selectedSize,
+                color: selectedColor,
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const button = document.querySelector(`.add-cart-btn[data-product-id="${productId}"]`);
+                    button.innerHTML = 'Added to Cart ✓';
+                    button.style.background = '#2ecc71';
+    
+                    // Update cart count dynamically
+                    const cartBadge = document.querySelector('.bi-cart3 + .badge');
+                    if (cartBadge) {
+                        cartBadge.textContent = data.cart_count;
+                        cartBadge.style.display = data.cart_count > 0 ? 'inline' : 'none';
+                    }
+    
+                    setTimeout(() => {
+                        button.innerHTML = 'Add to Cart';
+                        button.style.background = 'linear-gradient(45deg,rgb(255, 119, 0),rgb(255, 218, 33))';
+                    }, 2000);
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+    
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    
+</script>
+{% endblock %}

@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Zeref Shop | Your Favorites{% endblock %}
+
+{% block content %}
+<style>
+    .products-container {
+        background: linear-gradient(to right, #f6f6f6, #ffffff);
+        padding: 3rem 0;
+    }
+    
+    .card {
+        border: none;
+        max-width: 300px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    
+    .carousel {
+        border-radius: 15px 15px 0 0;
+        overflow: hidden;
+    }
+    
+    .card img {
+        height: 400px;
+        width: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .card:hover img {
+        transform: scale(1.05);
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+        background: white;
+    }
+    
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #333;
+        transition: color 0.3s ease;
+    }
+    
+    .card:hover .card-title {
+        color:  orange;
+    }
+    
+    .price {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: black;
+        margin: 0.5rem 0;
+        display: inline-block;
+        position: relative;
+    }
+    
+    .price::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(to right, black, gray);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+    
+    .card:hover .price::after {
+        transform: scaleX(1);
+    }
+    
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 40px;
+        height: 40px;
+        background: rgba(255,255,255,0.9);
+        border-radius: 50%;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+    
+    .card:hover .carousel-control-prev,
+    .card:hover .carousel-control-next {
+        opacity: 1;
+    }
+    
+    .carousel-control-prev {
+        left: 10px;
+    }
+    
+    .carousel-control-next {
+        right: 10px;
+    }
+    
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        filter: invert(1) grayscale(100);
+    }
+    
+    .product-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255,255,255,0.9);
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        z-index: 1;
+        backdrop-filter: blur(5px);
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .row-cols-md-3 .col.mb-4 {
+        animation: fadeIn 0.6s ease forwards;
+    }
+
+    .row-cols-md-3 .col.mb-4:nth-child(3n+1) {
+        animation-delay: 0s;
+    }
+
+    .row-cols-md-3 .col.mb-4:nth-child(3n+2) {
+        animation-delay: 0.1s;
+    }
+
+    .row-cols-md-3 .col.mb-4:nth-child(3n+3) {
+        animation-delay: 0.2s;
+    }
+
+    .heart-icon {
+        color: #ff6f61;
+        font-size: 1.5rem;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        padding: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        z-index: 2;
+        text-decoration: none;
+    }
+    
+    .heart-icon:hover {
+        background: #ff6f61;
+        color: #fff;
+        transform: scale(1.1);
+    }
+</style>
+
+<div class="products-container">
+    <div class="container">
+        <h2>Your Favorites</h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for product in favorite_products %}
+            <div class="col mb-4" data-product-id="{{ product.pk }}">
+                <div class="card h-100">
+                    {% if product.is_new %}
+                    <div class="product-badge">New Arrival</div>
+                    {% endif %}
+                    
+                    <div id="carousel-{{ product.pk }}" class="carousel slide position-relative" data-bs-ride="carousel">
+                        <!-- Heart Icon -->
+                        <a href="{% url 'toggle_favorites' product.pk %}" 
+                           class="heart-icon position-absolute top-0 end-0 m-3"
+                           data-product-id="{{ product.pk }}">
+                            <i class="bi {% if product.pk in favorites %}bi-heart{% else %}bi-heart-fill{% endif %}"></i>
+                        </a>
+                      
+                        <div class="carousel-inner">
+                            {% for image in product.images.all %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <img src="{{ image.image_url }}" class="d-block w-100" alt="{{ product.name }}">
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ product.pk }}" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ product.pk }}" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+
+                    <div class="card-body">
+                        <a href="{% url 'product_detail' product.pk %}" class="text-decoration-none">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                        </a>
+                        <p class="price">{{ product.price }} TL</p>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>No favorites yet!</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Attach event listeners to all heart icons
+        document.querySelectorAll('.heart-icon').forEach(function (icon) {
+            icon.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent default link behavior
+                
+                const url = icon.getAttribute('href'); 
+                const heartIcon = icon.querySelector('i'); 
+                const favoriteCountBadge = document.querySelector('.bi-heart + .badge');
+                const productCard = icon.closest('.col.mb-4'); // Get the card container
+                
+                // Send AJAX request
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Check if the product is still a favorite
+                    if (data.is_favorite) {
+                        // It's still favorite, update icon if needed
+                        heartIcon.classList.remove('bi-heart');
+                        heartIcon.classList.add('bi-heart-fill');
+                    } else {
+                        // It's no longer a favorite, remove card from DOM immediately
+                        productCard.remove();
+                    }
+
+                    // Update the favorite count dynamically, if applicable
+                    if (favoriteCountBadge) {
+                        favoriteCountBadge.textContent = data.favorite_count;
+                        if (data.favorite_count > 0) {
+                            favoriteCountBadge.style.visibility = 'visible';
+                            favoriteCountBadge.style.display = 'inline';
+                        } 
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+</script>
+
+{% endblock %}
