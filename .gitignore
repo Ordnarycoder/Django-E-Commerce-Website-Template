@@ -5,5 +5,4 @@
 *.pyc
 __pycache__/
 
-# Ignore SQLite database
-*.sqlite3
+
