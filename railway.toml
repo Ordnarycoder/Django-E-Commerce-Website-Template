@@ -1,0 +1,18 @@
+[phases.setup]
+nixPkgs = [
+  "zlib",
+  "libjpeg",
+  "freetype",
+  "libtiff",
+  "libpng"
+]
+
+[phases.build]
+cmds = [
+  "pip install --no-cache-dir -r requirements.txt",
+  "python manage.py migrate",
+  "python manage.py collectstatic --noinput"
+]
+
+[phases.start]
+cmd = "gunicorn ecommerce.wsgi:application --bind 0.0.0.0:$PORT"
