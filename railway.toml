@@ -1,0 +1,9 @@
+[build]
+builder = "nixpacks"
+
+[variables]
+PYTHONUNBUFFERED = "1"
+
+[[nixpacks.phases.setup]]
+aptPkgs = ["zlib1g-dev", "libjpeg-dev", "libfreetype6-dev", "libtiff5-dev", "liblcms2-dev", "libwebp-dev", "libpng-dev"]
+
