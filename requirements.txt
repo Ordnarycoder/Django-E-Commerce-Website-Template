@@ -2,3 +2,4 @@
 Django==5.1.4
 python-decouple==3.8
 gunicorn==21.2.0
+whitenoise==6.8.2
